@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
 const LoginForm = () => {
@@ -54,12 +55,22 @@ const LoginForm = () => {
     setLoading(true);
     setErrors({});
 
+    const toastId = toast.loading('Iniciando sesión...');
+
     const result = await login(formData.email, formData.password);
 
     if (result.success) {
+      toast.success('¡Bienvenido de nuevo!', {
+        id: toastId,
+        icon: '👋',
+      });
       navigate('/dashboard');
     } else {
       setErrors({ general: result.error });
+      toast.error(result.error || 'Error al iniciar sesión', {
+        id: toastId,
+        icon: '❌',
+      });
     }
 
     setLoading(false);

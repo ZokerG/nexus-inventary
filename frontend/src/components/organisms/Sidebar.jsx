@@ -110,13 +110,13 @@ const Sidebar = () => {
         <div className="flex items-center space-x-3 p-3 rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition-colors cursor-pointer group">
           <div className="relative">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-sm">
-              {getInitials(user?.nombre || user?.email)}
+              {getInitials(user?.username || user?.email)}
             </div>
             <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0A0E1A]"></div>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white font-medium truncate text-sm">
-              {user?.nombre || user?.email?.split('@')[0]}
+              {user?.username || user?.email?.split('@')[0]}
             </p>
             <p className="text-slate-400 text-xs truncate">{user?.email}</p>
           </div>

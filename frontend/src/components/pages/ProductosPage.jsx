@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import MainLayout from '../templates/MainLayout';
 import ProductoTable from '../organisms/ProductoTable';
@@ -61,27 +62,54 @@ const ProductosPage = () => {
 
     if (!confirmed) return;
 
+    const toastId = toast.loading('Eliminando producto...');
+
     try {
       const token = getToken();
       await productoService.delete(producto.codigo, token);
       setProductos(productos.filter(p => p.codigo !== producto.codigo));
-      alert('Producto eliminado exitosamente');
+      toast.success('Producto eliminado exitosamente', {
+        id: toastId,
+        icon: '🗑️',
+      });
     } catch (err) {
       console.error('Error deleting producto:', err);
       const errorMsg = err.response?.data?.error || 'Error al eliminar el producto';
-      alert(errorMsg);
+      toast.error(errorMsg, {
+        id: toastId,
+        icon: '❌',
+      });
     }
   };
 
   const handleSave = async (productoData) => {
     const token = getToken();
+    const toastId = toast.loading(modalMode === 'create' ? 'Creando producto...' : 'Actualizando producto...');
 
-    if (modalMode === 'create') {
-      const newProducto = await productoService.create(productoData, token);
-      setProductos([...productos, newProducto]);
-    } else {
-      const updatedProducto = await productoService.update(productoData.codigo, productoData, token);
-      setProductos(productos.map(p => p.codigo === updatedProducto.codigo ? updatedProducto : p));
+    try {
+      if (modalMode === 'create') {
+        const newProducto = await productoService.create(productoData, token);
+        setProductos([...productos, newProducto]);
+        toast.success('Producto creado exitosamente', {
+          id: toastId,
+          icon: '✅',
+        });
+      } else {
+        const updatedProducto = await productoService.update(productoData.codigo, productoData, token);
+        setProductos(productos.map(p => p.codigo === updatedProducto.codigo ? updatedProducto : p));
+        toast.success('Producto actualizado exitosamente', {
+          id: toastId,
+          icon: '✅',
+        });
+      }
+    } catch (err) {
+      console.error('Error saving producto:', err);
+      const errorMsg = err.response?.data?.error || 'Error al guardar el producto';
+      toast.error(errorMsg, {
+        id: toastId,
+        icon: '❌',
+      });
+      throw err;
     }
   };
 

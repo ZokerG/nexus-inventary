@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
 const RegisterForm = () => {
@@ -78,13 +79,24 @@ const RegisterForm = () => {
     setLoading(true);
     setErrors({});
 
+    const toastId = toast.loading('Creando tu cuenta...');
+
     const { confirmPassword, ...userData } = formData;
     const result = await register(userData);
 
     if (result.success) {
+      toast.success('¡Cuenta creada exitosamente! Bienvenido', {
+        id: toastId,
+        icon: '🎉',
+        duration: 4000,
+      });
       navigate('/dashboard');
     } else {
       setErrors({ general: result.error });
+      toast.error(result.error || 'Error al crear la cuenta', {
+        id: toastId,
+        icon: '❌',
+      });
     }
 
     setLoading(false);

@@ -29,7 +29,7 @@ class DashboardStatsView(APIView):
 
         # Empresas recientes
         empresas_recientes = Empresa.objects.order_by('-created_at')[:5].values(
-            'nit', 'nombre', 'telefono', 'created_at'
+            'nit', 'nombre', 'direccion', 'telefono', 'created_at'
         )
 
         # Productos más registrados en inventario

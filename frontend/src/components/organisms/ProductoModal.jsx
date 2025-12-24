@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import empresaService from '../../services/empresaService';
 import FormField from '../molecules/FormField';
-import Button from '../atoms/Button';
-import './ProductoModal.css';
 
 const ProductoModal = ({ isOpen, onClose, onSave, producto, mode = 'create' }) => {
+  const { tokens } = useAuth();
   const [formData, setFormData] = useState({
     codigo: '',
     nombre: '',
     caracteristicas: '',
+    empresa: '',
     precios: [
       { moneda: 'COP', precio: '' },
       { moneda: 'USD', precio: '' },
@@ -15,8 +17,16 @@ const ProductoModal = ({ isOpen, onClose, onSave, producto, mode = 'create' }) =
     ]
   });
 
+  const [empresas, setEmpresas] = useState([]);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadEmpresas();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (producto && mode === 'edit') {
@@ -24,6 +34,7 @@ const ProductoModal = ({ isOpen, onClose, onSave, producto, mode = 'create' }) =
         codigo: producto.codigo || '',
         nombre: producto.nombre || '',
         caracteristicas: producto.caracteristicas || '',
+        empresa: producto.empresa || '',
         precios: [
           { 
             moneda: 'COP', 
@@ -44,6 +55,7 @@ const ProductoModal = ({ isOpen, onClose, onSave, producto, mode = 'create' }) =
         codigo: '',
         nombre: '',
         caracteristicas: '',
+        empresa: '',
         precios: [
           { moneda: 'COP', precio: '' },
           { moneda: 'USD', precio: '' },
@@ -53,6 +65,25 @@ const ProductoModal = ({ isOpen, onClose, onSave, producto, mode = 'create' }) =
     }
     setErrors({});
   }, [producto, mode, isOpen]);
+
+  const getToken = () => {
+    return tokens?.access || JSON.parse(localStorage.getItem('tokens') || '{}').access;
+  };
+
+  const loadEmpresas = async () => {
+    try {
+      setLoadingData(true);
+      const token = getToken();
+      const data = await empresaService.getAll(token);
+      const empresasArray = Array.isArray(data) ? data : (data.results || []);
+      setEmpresas(empresasArray);
+    } catch (error) {
+      console.error('Error loading empresas:', error);
+      setErrors({ general: 'Error al cargar empresas' });
+    } finally {
+      setLoadingData(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -94,6 +125,10 @@ const ProductoModal = ({ isOpen, onClose, onSave, producto, mode = 'create' }) =
 
     if (!formData.caracteristicas) {
       newErrors.caracteristicas = 'Las características son requeridas';
+    }
+
+    if (!formData.empresa) {
+      newErrors.empresa = 'La empresa es requerida';
     }
 
     // Validar que al menos un precio esté ingresado
@@ -162,6 +197,7 @@ const ProductoModal = ({ isOpen, onClose, onSave, producto, mode = 'create' }) =
       codigo: '',
       nombre: '',
       caracteristicas: '',
+      empresa: '',
       precios: [
         { moneda: 'COP', precio: '' },
         { moneda: 'USD', precio: '' },
@@ -198,7 +234,42 @@ const ProductoModal = ({ isOpen, onClose, onSave, producto, mode = 'create' }) =
             </div>
           )}
 
-          <FormField
+          {loadingData ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="relative w-12 h-12">
+                <div className="absolute inset-0 border-4 border-blue-500/20 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Empresa Select */}
+              <div className="space-y-2">
+                <label htmlFor="empresa" className="block text-sm font-medium text-slate-300">
+                  Empresa
+                  <span className="text-red-400 ml-1">*</span>
+                </label>
+                <select
+                  id="empresa"
+                  name="empresa"
+                  value={formData.empresa}
+                  onChange={handleChange}
+                  disabled={mode === 'edit'}
+                  className={`w-full px-4 py-3 bg-slate-800/30 border ${errors.empresa ? 'border-red-500/50' : 'border-slate-700/50'} rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <option value="">Seleccionar empresa...</option>
+                  {empresas.map((empresa) => (
+                    <option key={empresa.nit} value={empresa.nit}>
+                      {empresa.nombre} - {empresa.nit}
+                    </option>
+                  ))}
+                </select>
+                {errors.empresa && (
+                  <p className="text-red-400 text-sm">{errors.empresa}</p>
+                )}
+              </div>
+
+              <FormField
             label="Código del Producto"
             name="codigo"
             type="text"
@@ -302,6 +373,8 @@ const ProductoModal = ({ isOpen, onClose, onSave, producto, mode = 'create' }) =
               </div>
             </div>
           </div>
+            </>
+          )}
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800/50">
             <button
@@ -314,7 +387,7 @@ const ProductoModal = ({ isOpen, onClose, onSave, producto, mode = 'create' }) =
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || loadingData}
               className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {loading ? 'Guardando...' : mode === 'create' ? 'Crear Producto' : 'Guardar Cambios'}

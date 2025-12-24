@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import MainLayout from '../templates/MainLayout';
 import EmpresaTable from '../organisms/EmpresaTable';
@@ -56,7 +57,9 @@ const EmpresasPage = () => {
 
   const handleDelete = async (empresa) => {
     if (!isAdmin()) {
-      alert('Solo los administradores pueden eliminar empresas');
+      toast.error('Solo los administradores pueden eliminar empresas', {
+        icon: '🔒',
+      });
       return;
     }
 
@@ -66,27 +69,54 @@ const EmpresasPage = () => {
 
     if (!confirmed) return;
 
+    const toastId = toast.loading('Eliminando empresa...');
+    
     try {
       const token = getToken();
       await empresaService.delete(empresa.nit, token);
       setEmpresas(empresas.filter(e => e.nit !== empresa.nit));
-      alert('Empresa eliminada exitosamente');
+      toast.success('Empresa eliminada exitosamente', {
+        id: toastId,
+        icon: '🗑️',
+      });
     } catch (err) {
       console.error('Error deleting empresa:', err);
       const errorMsg = err.response?.data?.error || 'Error al eliminar la empresa';
-      alert(errorMsg);
+      toast.error(errorMsg, {
+        id: toastId,
+        icon: '❌',
+      });
     }
   };
 
   const handleSave = async (empresaData) => {
     const token = getToken();
+    const toastId = toast.loading(modalMode === 'create' ? 'Creando empresa...' : 'Actualizando empresa...');
 
-    if (modalMode === 'create') {
-      const newEmpresa = await empresaService.create(empresaData, token);
-      setEmpresas([...empresas, newEmpresa]);
-    } else {
-      const updatedEmpresa = await empresaService.update(empresaData.nit, empresaData, token);
-      setEmpresas(empresas.map(e => e.nit === updatedEmpresa.nit ? updatedEmpresa : e));
+    try {
+      if (modalMode === 'create') {
+        const newEmpresa = await empresaService.create(empresaData, token);
+        setEmpresas([...empresas, newEmpresa]);
+        toast.success('Empresa creada exitosamente', {
+          id: toastId,
+          icon: '✅',
+        });
+      } else {
+        const updatedEmpresa = await empresaService.update(empresaData.nit, empresaData, token);
+        setEmpresas(empresas.map(e => e.nit === updatedEmpresa.nit ? updatedEmpresa : e));
+        toast.success('Empresa actualizada exitosamente', {
+          id: toastId,
+          icon: '✅',
+        });
+      }
+    } catch (err) {
+      console.error('Error saving empresa:', err);
+      const errorMsg = err.response?.data?.error || 'Error al guardar la empresa';
+      toast.error(errorMsg, {
+        id: toastId,
+        icon: '❌',
+      });
+      throw err;
     }
   };
 

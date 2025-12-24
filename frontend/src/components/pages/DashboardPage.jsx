@@ -157,10 +157,10 @@ const DashboardPage = () => {
                         <span className="text-white font-medium">{empresa.nombre}</span>
                       </td>
                       <td className="py-4 px-6">
-                        <span className="text-slate-400 text-sm">{empresa.direccion}</span>
+                        <span className="text-slate-400 text-sm">{empresa.direccion || 'N/A'}</span>
                       </td>
                       <td className="py-4 px-6">
-                        <span className="text-slate-400 text-sm">{empresa.telefono}</span>
+                        <span className="text-slate-400 text-sm">{empresa.telefono || 'N/A'}</span>
                       </td>
                     </tr>
                   ))}
@@ -182,25 +182,25 @@ const DashboardPage = () => {
                   <tr className="border-b border-slate-800/50">
                     <th className="text-left py-4 px-6 font-semibold text-slate-400 text-sm">Código</th>
                     <th className="text-left py-4 px-6 font-semibold text-slate-400 text-sm">Nombre</th>
-                    <th className="text-left py-4 px-6 font-semibold text-slate-400 text-sm">Características</th>
+                    <th className="text-left py-4 px-6 font-semibold text-slate-400 text-sm">Empresa</th>
                     <th className="text-right py-4 px-6 font-semibold text-slate-400 text-sm">Cantidad</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {stats.productos_top.map((producto) => (
-                    <tr key={producto.codigo} className="border-b border-slate-800/30 hover:bg-slate-800/20 transition-colors">
+                  {stats.productos_top.map((producto, index) => (
+                    <tr key={producto.producto__codigo || index} className="border-b border-slate-800/30 hover:bg-slate-800/20 transition-colors">
                       <td className="py-4 px-6">
-                        <span className="font-mono text-sm text-blue-400 font-medium">{producto.codigo}</span>
+                        <span className="font-mono text-sm text-blue-400 font-medium">{producto.producto__codigo}</span>
                       </td>
                       <td className="py-4 px-6">
-                        <span className="text-white font-medium">{producto.nombre}</span>
+                        <span className="text-white font-medium">{producto.producto__nombre}</span>
                       </td>
                       <td className="py-4 px-6">
-                        <span className="text-slate-400 text-sm">{producto.caracteristicas}</span>
+                        <span className="text-slate-400 text-sm">{producto.producto__empresa__nombre}</span>
                       </td>
                       <td className="py-4 px-6 text-right">
                         <span className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 font-semibold text-sm">
-                          {producto.cantidad_total}
+                          {producto.total_cantidad}
                         </span>
                       </td>
                     </tr>
@@ -218,9 +218,9 @@ const DashboardPage = () => {
               <h2 className="text-xl font-bold text-white">Inventario por Empresa</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-              {stats.inventario_por_empresa.map((item) => (
+              {stats.inventario_por_empresa.map((item, index) => (
                 <div 
-                  key={item.empresa} 
+                  key={item.empresa__nit || index} 
                   className="bg-slate-800/30 rounded-xl p-5 border border-slate-700/50 hover:border-blue-500/50 transition-all hover:-translate-y-1"
                 >
                   <div className="flex items-center gap-3 mb-4">
@@ -229,20 +229,16 @@ const DashboardPage = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                       </svg>
                     </div>
-                    <h3 className="text-white font-semibold text-lg">{item.empresa}</h3>
+                    <h3 className="text-white font-semibold text-lg">{item.empresa__nombre}</h3>
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-slate-400 text-sm">Items</span>
-                      <span className="text-white font-semibold">{item.total_items}</span>
+                      <span className="text-white font-semibold">{item.total_productos || 0}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-slate-400 text-sm">Cantidad</span>
-                      <span className="text-blue-400 font-semibold">{item.cantidad_total}</span>
-                    </div>
-                    <div className="flex justify-between items-center pt-2 border-t border-slate-700/50">
-                      <span className="text-slate-400 text-sm">Valor Total</span>
-                      <span className="text-green-400 font-bold">{formatCurrency(item.valor_total_cop)}</span>
+                      <span className="text-blue-400 font-semibold">{item.total_cantidad || 0}</span>
                     </div>
                   </div>
                 </div>
@@ -258,31 +254,45 @@ const DashboardPage = () => {
               <h2 className="text-xl font-bold text-white">Actividad Reciente</h2>
             </div>
             <div className="p-6 space-y-3">
-              {stats.actividad_reciente.map((activity) => (
+              {stats.actividad_reciente.map((activity, index) => (
                 <div 
-                  key={activity.id} 
+                  key={index} 
                   className="flex items-start gap-4 p-4 rounded-lg bg-slate-800/30 border border-slate-700/50 hover:border-blue-500/50 transition-all hover:bg-slate-800/50"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                    activity.tipo === 'empresa' ? 'bg-blue-500/10' : 'bg-purple-500/10'
+                  }`}>
+                    {activity.tipo === 'empresa' ? (
+                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                      </svg>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <p className="text-white font-medium">
-                          <span className="text-blue-400">{activity.empresa}</span>
-                          <span className="text-slate-500 mx-2">•</span>
-                          <span>{activity.producto}</span>
+                          {activity.descripcion}
                         </p>
-                        <div className="flex items-center gap-4 mt-2 text-sm">
-                          <span className="text-slate-400">
-                            Cantidad: <span className="text-white font-medium">{activity.cantidad}</span>
+                        <div className="flex items-center gap-2 mt-2 text-sm">
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${
+                            activity.tipo === 'empresa' ? 'bg-blue-500/10 text-blue-400' : 'bg-purple-500/10 text-purple-400'
+                          }`}>
+                            {activity.tipo === 'empresa' ? 'Empresa' : 'Producto'}
                           </span>
-                          <span className="text-slate-500">|</span>
-                          <span className="text-green-400 font-semibold">
-                            {formatCurrency(activity.valor_total_cop)}
+                          <span className="text-slate-500">•</span>
+                          <span className="text-slate-400">
+                            {new Date(activity.fecha).toLocaleDateString('es-ES', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
                           </span>
                         </div>
                       </div>

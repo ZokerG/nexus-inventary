@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import MainLayout from '../templates/MainLayout';
 import InventarioTable from '../organisms/InventarioTable';
@@ -71,57 +72,103 @@ const InventarioPage = () => {
 
     if (!confirmed) return;
 
+    const toastId = toast.loading('Eliminando registro...');
+
     try {
       const token = getToken();
       await inventarioService.delete(inventario.id, token);
       setInventarios(inventarios.filter(i => i.id !== inventario.id));
-      alert('Registro eliminado exitosamente');
+      toast.success('Registro eliminado exitosamente', {
+        id: toastId,
+        icon: '🗑️',
+      });
     } catch (err) {
       console.error('Error deleting inventario:', err);
       const errorMsg = err.response?.data?.error || 'Error al eliminar el registro';
-      alert(errorMsg);
+      toast.error(errorMsg, {
+        id: toastId,
+        icon: '❌',
+      });
     }
   };
 
   const handleSave = async (inventarioData) => {
     const token = getToken();
+    const toastId = toast.loading(modalMode === 'create' ? 'Creando registro...' : 'Actualizando registro...');
 
-    if (modalMode === 'create') {
-      const newInventario = await inventarioService.create(inventarioData, token);
-      setInventarios([...inventarios, newInventario]);
-    } else {
-      const updatedInventario = await inventarioService.update(selectedInventario.id, inventarioData, token);
-      setInventarios(inventarios.map(i => i.id === updatedInventario.id ? updatedInventario : i));
+    try {
+      if (modalMode === 'create') {
+        const newInventario = await inventarioService.create(inventarioData, token);
+        setInventarios([...inventarios, newInventario]);
+        toast.success('Registro creado exitosamente', {
+          id: toastId,
+          icon: '✅',
+        });
+      } else {
+        const updatedInventario = await inventarioService.update(selectedInventario.id, inventarioData, token);
+        setInventarios(inventarios.map(i => i.id === updatedInventario.id ? updatedInventario : i));
+        toast.success('Registro actualizado exitosamente', {
+          id: toastId,
+          icon: '✅',
+        });
+      }
+    } catch (err) {
+      console.error('Error saving inventario:', err);
+      const errorMsg = err.response?.data?.error || 'Error al guardar el registro';
+      toast.error(errorMsg, {
+        id: toastId,
+        icon: '❌',
+      });
+      throw err;
     }
   };
 
   const handleExportPDF = async () => {
+    const toastId = toast.loading('Generando PDF...');
+    
     try {
       const token = getToken();
       await inventarioService.exportPDF(filterEmpresa, token);
-      alert('PDF descargado exitosamente');
+      toast.success('PDF descargado exitosamente', {
+        id: toastId,
+        icon: '📄',
+      });
     } catch (err) {
       console.error('Error exporting PDF:', err);
-      alert('Error al exportar PDF');
+      toast.error('Error al exportar PDF', {
+        id: toastId,
+        icon: '❌',
+      });
     }
   };
 
   const handleSendEmail = async () => {
     if (!emailAddress) {
-      alert('Por favor ingrese un email');
+      toast.error('Por favor ingrese un email', {
+        icon: '✉️',
+      });
       return;
     }
+
+    const toastId = toast.loading(`Enviando PDF a ${emailAddress}...`);
 
     try {
       setEmailLoading(true);
       const token = getToken();
       await inventarioService.sendEmail(emailAddress, filterEmpresa, token);
-      alert(`PDF enviado exitosamente a ${emailAddress}`);
+      toast.success(`PDF enviado exitosamente a ${emailAddress}`, {
+        id: toastId,
+        icon: '✉️',
+        duration: 5000,
+      });
       setEmailModalOpen(false);
       setEmailAddress('');
     } catch (err) {
       console.error('Error sending email:', err);
-      alert('Error al enviar el email');
+      toast.error('Error al enviar el email', {
+        id: toastId,
+        icon: '❌',
+      });
     } finally {
       setEmailLoading(false);
     }
