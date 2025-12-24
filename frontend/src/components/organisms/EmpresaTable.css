@@ -1,0 +1,136 @@
+.table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.empresa-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.empresa-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.empresa-table th {
+  padding: 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.empresa-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.empresa-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.empresa-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.empresa-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.nit-cell {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.nombre-cell {
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.actions-column {
+  text-align: center;
+  width: 120px;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  border-bottom: none !important;
+}
+
+.action-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.edit-btn:hover {
+  background-color: #dbeafe;
+  transform: scale(1.1);
+}
+
+.delete-btn:hover {
+  background-color: #fee2e2;
+  transform: scale(1.1);
+}
+
+.table-loading,
+.table-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  border: 1px solid #e2e8f0;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.table-empty h3 {
+  font-size: 18px;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.table-empty p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .empresa-table {
+    font-size: 12px;
+  }
+
+  .empresa-table th,
+  .empresa-table td {
+    padding: 12px 8px;
+  }
+
+  .action-btn {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+}

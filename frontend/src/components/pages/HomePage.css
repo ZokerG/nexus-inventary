@@ -1,0 +1,61 @@
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.home-card {
+  background: white;
+  border-radius: 16px;
+  padding: 60px 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+.home-card h1 {
+  font-size: 32px;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+.welcome-message {
+  font-size: 18px;
+  color: #64748b;
+  margin-bottom: 16px;
+}
+
+.role-badge {
+  margin-bottom: 32px;
+  font-size: 16px;
+  color: #64748b;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.badge-admin {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.badge-externo {
+  background-color: #e0e7ff;
+  color: #4338ca;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 32px;
+}

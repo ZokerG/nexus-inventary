@@ -1,0 +1,131 @@
+.producto-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.producto-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.producto-table th {
+  padding: 16px 12px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.producto-table td {
+  padding: 16px 12px;
+  font-size: 14px;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.producto-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.producto-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.producto-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.codigo-cell {
+  font-weight: 600;
+  color: #667eea;
+  font-family: 'Courier New', monospace;
+}
+
+.nombre-cell {
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.caracteristicas-cell {
+  color: #64748b;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price-column {
+  text-align: right;
+  width: 110px;
+}
+
+.price-cell {
+  text-align: right;
+  font-weight: 600;
+  color: #10b981;
+  font-family: 'Courier New', monospace;
+}
+
+.actions-column {
+  text-align: center;
+  width: 120px;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  border-bottom: none !important;
+}
+
+.action-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.edit-btn:hover {
+  background-color: #dbeafe;
+  transform: scale(1.1);
+}
+
+.delete-btn:hover {
+  background-color: #fee2e2;
+  transform: scale(1.1);
+}
+
+@media (max-width: 1200px) {
+  .producto-table {
+    font-size: 12px;
+  }
+
+  .producto-table th,
+  .producto-table td {
+    padding: 12px 8px;
+  }
+
+  .caracteristicas-cell {
+    max-width: 150px;
+  }
+
+  .price-column {
+    width: 90px;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .producto-table {
+    min-width: 900px;
+  }
+}

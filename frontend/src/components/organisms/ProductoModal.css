@@ -1,0 +1,110 @@
+.producto-modal {
+  max-width: 700px;
+}
+
+.precios-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.precios-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 16px 0;
+}
+
+.precios-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.precio-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.precio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+}
+
+.currency-flag {
+  font-size: 20px;
+}
+
+.price-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'Courier New', monospace;
+  color: #1e293b;
+  transition: all 0.2s ease;
+  background-color: #f8fafc;
+}
+
+.price-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background-color: white;
+}
+
+.price-input::placeholder {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+}
+
+.field-error {
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Agregar estilos para remover las flechas de los inputs number */
+.price-input::-webkit-outer-spin-button,
+.price-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.price-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+@media (max-width: 768px) {
+  .producto-modal {
+    max-width: 95%;
+  }
+
+  .precios-section h3 {
+    font-size: 16px;
+  }
+
+  .precio-label {
+    font-size: 13px;
+  }
+
+  .currency-flag {
+    font-size: 18px;
+  }
+
+  .price-input {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+}
