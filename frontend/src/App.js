@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './components/pages/LoginPage';
 import RegisterPage from './components/pages/RegisterPage';
@@ -9,7 +9,18 @@ import DashboardPage from './components/pages/DashboardPage';
 import EmpresasPage from './components/pages/EmpresasPage';
 import ProductosPage from './components/pages/ProductosPage';
 import InventarioPage from './components/pages/InventarioPage';
+import ChatBot from './components/organisms/ChatBot';
 import './App.css';
+
+// Componente wrapper para el chatbot que verifica autenticación
+const ChatBotWrapper = () => {
+  const { user } = useAuth();
+  
+  // Solo mostrar el chatbot si hay usuario autenticado
+  if (!user) return null;
+  
+  return <ChatBot />;
+};
 
 function App() {
   return (
@@ -103,6 +114,9 @@ function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
+        
+        {/* Chatbot flotante - solo para usuarios autenticados */}
+        <ChatBotWrapper />
       </BrowserRouter>
     </AuthProvider>
   );

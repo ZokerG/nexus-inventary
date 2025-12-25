@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import MainLayout from '../templates/MainLayout';
@@ -22,15 +22,11 @@ const InventarioPage = () => {
   const [emailAddress, setEmailAddress] = useState('');
   const [emailLoading, setEmailLoading] = useState(false);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const getToken = () => {
+  const getToken = useCallback(() => {
     return tokens?.access || JSON.parse(localStorage.getItem('tokens') || '{}').access;
-  };
+  }, [tokens]);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       const token = getToken();
@@ -51,7 +47,11 @@ const InventarioPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getToken]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleCreate = () => {
     setSelectedInventario(null);

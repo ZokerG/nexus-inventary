@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import MainLayout from '../templates/MainLayout';
 import ProductoTable from '../organisms/ProductoTable';
 import ProductoModal from '../organisms/ProductoModal';
-import Button from '../atoms/Button';
 import productoService from '../../services/productoService';
 import './ProductosPage.css';
 
@@ -18,15 +17,11 @@ const ProductosPage = () => {
   const [modalMode, setModalMode] = useState('create');
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    loadProductos();
-  }, []);
-
-  const getToken = () => {
+  const getToken = useCallback(() => {
     return tokens?.access || JSON.parse(localStorage.getItem('tokens') || '{}').access;
-  };
+  }, [tokens]);
 
-  const loadProductos = async () => {
+  const loadProductos = useCallback(async () => {
     try {
       setLoading(true);
       const token = getToken();
@@ -41,7 +36,11 @@ const ProductosPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getToken]);
+
+  useEffect(() => {
+    loadProductos();
+  }, [loadProductos]);
 
   const handleCreate = () => {
     setSelectedProducto(null);

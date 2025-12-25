@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'apps.empresas',
     'apps.productos',
     'apps.inventario',
+    'apps.chatbot',
 ]
 
 MIDDLEWARE = [
@@ -164,3 +165,6 @@ SPECTACULAR_SETTINGS = {
         }
     },
 }
+
+# Gemini API Configuration
+GEMINI_API_KEY = config('GEMINI_API_KEY', default='')

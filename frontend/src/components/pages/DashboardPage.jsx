@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import MainLayout from '../templates/MainLayout';
 import StatCard from '../atoms/StatCard';
@@ -6,16 +6,12 @@ import Button from '../atoms/Button';
 import dashboardService from '../../services/dashboardService';
 
 const DashboardPage = () => {
-  const { user, tokens } = useAuth();
+  const { tokens } = useAuth();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    loadDashboardStats();
-  }, []);
-
-  const loadDashboardStats = async () => {
+  const loadDashboardStats = useCallback(async () => {
     try {
       setLoading(true);
       const token = tokens?.access || JSON.parse(localStorage.getItem('tokens') || '{}').access;
@@ -28,7 +24,11 @@ const DashboardPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [tokens]);
+
+  useEffect(() => {
+    loadDashboardStats();
+  }, [loadDashboardStats]);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('es-CO', {
