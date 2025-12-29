@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Producto, PrecioMoneda
+from .orm_models import Producto, PrecioMoneda
 
 
 class PrecioMonedaInline(admin.TabularInline):

@@ -5,16 +5,6 @@ from decouple import config
 
 
 def send_pdf_via_email(pdf_path, recipient_email):
-    """
-    Envía un PDF por email usando MailerSend API REST
-    
-    Args:
-        pdf_path: Ruta al archivo PDF
-        recipient_email: Email del destinatario
-    
-    Returns:
-        dict: {'success': bool, 'error': str (si hay error), 'message_id': str (si success)}
-    """
     try:
         print(f"📧 [EMAIL SERVICE] Iniciando envío de email a {recipient_email}")
         

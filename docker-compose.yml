@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: nexus_db
+    restart: always
+    environment:
+      POSTGRES_DB: ara
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: quinteropo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - nexus_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Django
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nexus_backend
+    restart: always
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+    environment:
+      - DEBUG=False
+      - ALLOWED_HOSTS=localhost,127.0.0.1,backend
+      - DB_NAME=ara
+      - DB_USER=postgres
+      - DB_PASSWORD=quinteropo
+      - DB_HOST=db
+      - DB_PORT=5432
+      - SECRET_KEY=laurita-cabeza-de-queso
+      - GEMINI_API_KEY=AIzaSyBIRLReN7ISvYp1-OqlAMzYRqmE14So_SA
+      - MAILERSEND_API_KEY=mlsn.be01e92f1e6a201e138fd6d0821b21651e60c92de1b68ef09841a837592aed53
+      - MAILERSEND_FROM_EMAIL=info@test-dnvo4d9e12ng5r86.mlsender.net
+      - MAILERSEND_FROM_NAME=Sistema de Inventario
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - nexus_network
+
+  # Frontend React
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nexus_frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - nexus_network
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+
+  # Nginx (Opcional - Para producción)
+  nginx:
+    image: nginx:alpine
+    container_name: nexus_nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - nexus_network
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  nexus_network:
+    driver: bridge

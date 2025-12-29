@@ -1,10 +1,39 @@
+# Django Core
 Django==5.0
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.1
+
+# Database
 psycopg2-binary==2.9.9
+
+# Configuration
 python-decouple==3.8
+
+# CORS
 django-cors-headers==4.3.1
+
+# Filtering
 django-filter==23.5
+
+# PDF Generation
 reportlab==4.0.9
 Pillow==10.1.0
+
+# API Documentation
 drf-spectacular==0.27.0
+
+# Google Gemini AI
+google-genai==0.2.2
+
+# Email Service
+requests==2.31.0
+
+# Production Server
+gunicorn==21.2.0
+
+# Additional utilities
+python-dateutil==2.8.2
+pytz==2024.1
+
+# Domain Layer
+nexus-domain @ file:///C:/Users/carlo/Documents/personal-project/technical-test/domain

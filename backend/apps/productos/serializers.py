@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Producto, PrecioMoneda
+from .orm_models import Producto, PrecioMoneda
 
 
 class PrecioMonedaSerializer(serializers.ModelSerializer):

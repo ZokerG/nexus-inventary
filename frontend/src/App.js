@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -12,12 +12,18 @@ import InventarioPage from './components/pages/InventarioPage';
 import ChatBot from './components/organisms/ChatBot';
 import './App.css';
 
-// Componente wrapper para el chatbot que verifica autenticación
+// Componente wrapper para el chatbot que verifica autenticación y ruta
 const ChatBotWrapper = () => {
   const { user } = useAuth();
+  const location = useLocation();
   
-  // Solo mostrar el chatbot si hay usuario autenticado
-  if (!user) return null;
+  // Rutas donde NO debe aparecer el chatbot
+  const publicRoutes = ['/login', '/register', '/'];
+  
+  // Solo mostrar el chatbot si hay usuario autenticado Y no está en rutas públicas
+  if (!user || publicRoutes.includes(location.pathname)) {
+    return null;
+  }
   
   return <ChatBot />;
 };

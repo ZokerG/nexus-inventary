@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Empresa
+from .orm_models import Empresa
 
 
 @admin.register(Empresa)

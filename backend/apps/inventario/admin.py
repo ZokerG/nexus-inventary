@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Inventario
+from .orm_models import Inventario
 
 
 @admin.register(Inventario)
